@@ -1,0 +1,5 @@
+pip freeze > requirements.txt
+
+pip download -d "下载包存放的路径" -r requirements.txt
+
+pip install --no-index --find-link="下载包存放的路径" -r requirements.txt

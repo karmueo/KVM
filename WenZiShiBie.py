@@ -5,7 +5,10 @@
 import pytesseract
 import os
 import configparser
-import win32gui, win32ui, win32con, win32api
+import win32gui
+import win32ui
+import win32con
+import win32api
 from PIL import Image
 from pykeyboard import PyKeyboard
 import time
@@ -17,12 +20,13 @@ import argparse
 import psutil
 import win32process
 
+
 def killOldProcess():
     # kill 已有的进程id
     try:
         with open('pid.txt', 'r') as f:
             old_pid = int(f.readline().rstrip('\n'))
-            if old_pid :
+            if old_pid:
                 # 确定进程id是运行的当前程序，防止误杀
                 # ps_info = os.popen("ps -ef | grep %s | awk '{print $2}'" % __file__)
                 ps_info = psutil.pids()
@@ -31,7 +35,7 @@ def killOldProcess():
     except IOError:
         pass
     # 保存当前进程id
-    with open('pid.txt', 'w') as f :
+    with open('pid.txt', 'w') as f:
         f.write('%d\n' % os.getpid())
 
 
@@ -55,6 +59,7 @@ def init_args():
                       default=0)
     return args.parse_args()
 
+
 class kvm_event():
     def __init__(self, wnd_class, wnd_name, pid, server_ip, server_port, logger):
         self.udp = UdpInterface.UdpClient(server_ip, int(server_port))
@@ -71,7 +76,7 @@ class kvm_event():
         self.logger = logger
         if self.handle == 0:
             self.logger.warning('无法获取KVM的窗口句柄')
-        assert self.handle is not 0, "无法获取KVM的窗口句柄"
+        assert self.handle != 0, "无法获取KVM的窗口句柄"
         # self.udp.send(b'-1')
 
     def get_handle(self, wnd_class, wnd_name, pid):
@@ -82,7 +87,7 @@ class kvm_event():
         :param pid:
         :return:
         """
-        hd1 = handle = win32gui.FindWindow(wnd_class, wnd_name)
+        hd1 = win32gui.FindWindow(wnd_class, wnd_name)
         hd2_list = self.get_hwnds_for_pid(pid)
         if hd2_list.__len__() == 0:
             hd2 = 0
@@ -116,7 +121,6 @@ class kvm_event():
         hwnds = []
         win32gui.EnumWindows(callback, hwnds)
         return hwnds
-
 
     def parse_cfg(self, cfgfile):
         fp = open(cfgfile, 'r')
@@ -197,11 +201,13 @@ class kvm_event():
         elif key == 'esc':
             print("send keydown 'esc'")
             k.tap_key(k.escape_key)
-            win32gui.PostMessage(self.handle, win32con.WM_KEYDOWN, win32con.VK_ESCAPE, 0)
+            win32gui.PostMessage(
+                self.handle, win32con.WM_KEYDOWN, win32con.VK_ESCAPE, 0)
         elif key == 'f1':
             print("send keydown 'f1'")
             k.tap_key(k.function_keys[1])
-            win32gui.PostMessage(self.handle, win32con.WM_KEYDOWN, win32con.VK_F1, 0)
+            win32gui.PostMessage(
+                self.handle, win32con.WM_KEYDOWN, win32con.VK_F1, 0)
         elif key == 'enter':
             print("send keydown 'enter'")
             k.tap_key(k.enter_key)
@@ -265,6 +271,7 @@ class kvm_event():
             # 如果设置了time_out，则循环检测该block
             is_timeout = False
             time_out = int(block['time_out'])
+
             def timer_fun():
                 # 定时器到了，就结束循环
                 nonlocal is_timeout
@@ -307,7 +314,7 @@ class kvm_event():
         else:
             # 如果没有设置time_out，则正常识别文字，发送按键指令
             # sb_str = wzsb(block['last_image_path'], box)
-            sb_str = wzsb_times(label = block['key_text'],
+            sb_str = wzsb_times(label=block['key_text'],
                                 img=block['last_image_path'],
                                 box=box)
             msg_str = '识别结果: ' + sb_str
@@ -331,8 +338,8 @@ class kvm_event():
                                  int(block['error_box_br_x']),
                                  int(block['error_box_br_y']))
                     error_sb_str = wzsb_times(label=block['error_key_text'],
-                                        img=block['last_image_path'],
-                                        box=error_box)
+                                              img=block['last_image_path'],
+                                              box=error_box)
                     # error_sb_str = wzsb(block['last_image_path'], error_box)
                     msg_str = '识别错误字符: ' + error_sb_str
                     print(msg_str)
@@ -347,8 +354,10 @@ class kvm_event():
                         self.logger.warning(msg_str)
                         return -1
                     else:
-                        error_str = "识别{} 和 {} 失败。".format(block['key_text'], block['error_key_text'])
-                        print("识别{} 和 {} 失败。".format(block['key_text'], block['error_key_text']))
+                        error_str = "识别{} 和 {} 失败。".format(
+                            block['key_text'], block['error_key_text'])
+                        print("识别{} 和 {} 失败。".format(
+                            block['key_text'], block['error_key_text']))
                         self.logger.warning(error_str)
                         return -1
 
@@ -358,7 +367,7 @@ class kvm_event():
             #     logger.warning('配置文件格式错误.')
             #     return
             if 'box_tl_x' in block.keys() and 'box_tl_y' in block.keys() and 'box_br_x' in block.keys()  \
-                and 'box_br_y' in block.keys() and 'error_times' in block.keys():
+                    and 'box_br_y' in block.keys() and 'error_times' in block.keys():
                 if not block['box_tl_x'].isdigit() \
                         or not block['box_tl_y'].isdigit() \
                         or not block['box_br_x'].isdigit() \
@@ -390,6 +399,7 @@ class kvm_event():
             # 成功发送0
         self.udp.send(b'0')
         win32gui.PostMessage(self.handle, win32con.WM_CLOSE, 0, 0)
+
 
 def wzsb(imgPath, box):
     """
@@ -426,7 +436,8 @@ def wzsb(imgPath, box):
     else:
         return -1
 
-def wzsb_times(label, img, box, move_list=[-1,0,1]):
+
+def wzsb_times(label, img, box, move_list=[-1, 0, 1]):
     """
     多次识别，每次把识别窗口移动move_list中的值
     :param label:
@@ -450,6 +461,7 @@ def wzsb_times(label, img, box, move_list=[-1,0,1]):
             if label in sb_str:
                 return sb_str
     return 'error'
+
 
 def kvm_process(cfg_root_path, type, pid):
     config_path = os.path.join(cfg_root_path, 'window.cfg')
@@ -484,7 +496,6 @@ def kvm_process(cfg_root_path, type, pid):
     ke.process(blocks)
 
 
-
 # def _MyCallback( hwnd, extra ):
 #     windows = extra
 #     temp=[]
@@ -502,8 +513,6 @@ def kvm_process(cfg_root_path, type, pid):
 #     print('-------------------------------')
 #     for item in windows :
 #         print(windows[item])
-
-
 
 
 if __name__ == '__main__':

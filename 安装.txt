@@ -3,3 +3,9 @@ pip freeze > requirements.txt
 pip download -d "下载包存放的路径" -r requirements.txt
 
 pip install --no-index --find-link="下载包存放的路径" -r requirements.txt
+
+进入虚拟环境（可选）
+[虚拟环境目录]/Scripts/activate
+
+退出虚拟化环境
+[虚拟环境目录]/Scripts/deactivate

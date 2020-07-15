@@ -1,3 +1,11 @@
+'''
+@Author: 沈昌力
+@Date: 2019-08-07 08:43:48
+@LastEditTime: 2020-07-13 13:53:58
+@LastEditors: 沈昌力
+@Description: 
+@FilePath: \KVM\sb_test.py
+'''
 import WenZiShiBie as wz
 
 box_tl_x = 302
@@ -8,7 +16,7 @@ bbox = [box_tl_x, box_tl_y, box_br_x, box_br_y]
 sb_str = wz.wzsb('E:/testNetAPI/testNetAPI/ImgTest/process_2.jpg', bbox)
 print(sb_str)
 
-move_list = [-1,0,1]
+move_list = [-1, 0, 1]
 
 for i in move_list:
     for j in move_list:
@@ -17,6 +25,7 @@ for i in move_list:
         box_tl_y += j
         box_br_y += j
         bbox = [box_tl_x, box_tl_y, box_br_x, box_br_y]
-        sb_str = wz.wzsb('E:/testNetAPI/testNetAPI/ImgTest/process_2.jpg', bbox)
+        sb_str = wz.wzsb(
+            'E:/testNetAPI/testNetAPI/ImgTest/process_2.jpg', bbox)
         str = 'i={}, j={}, str={}'.format(i, j, sb_str)
         print(str)

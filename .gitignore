@@ -1,0 +1,13 @@
+.idea
+*.iml
+__pycache__
+data
+env*
+*.docx
+pkg
+packages
+.ensime_cache
+.vscode
+BackupConfig
+kvm_env
+Log/*

@@ -10,7 +10,7 @@ pyHook==1.5.1
 pypiwin32==223
 pytesseract==0.2.6
 PyUserInput==0.1.11
-pywin32==224
+pywin32==301
 six==1.15.0
 virtualenv @ file:///E:/SRC/KVM/pkg/virtualenv-20.0.26-py2.py3-none-any.whl
 zipp==3.1.0

@@ -5,4 +5,4 @@ pyHook==1.5.1
 pypiwin32==223
 pytesseract==0.2.6
 pyuserinput==0.1.11
-pywin32==224
+pywin32==301
